@@ -7,7 +7,7 @@
   - ESLint, Prettier, Husky の設定
   - _要件: 9.1, 11.1_
 
-- [ ] 2. データベーススキーマと Supabase 設定の実装
+- [x] 2. データベーススキーマと Supabase 設定の実装
   - [x] 2.1 コアテーブルの作成と RLS 設定
     - users, themes, trend_data, competitor_analysis テーブルの作成
     - Row Level Security (RLS) ポリシーの設定
