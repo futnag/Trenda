@@ -20,7 +20,7 @@
     - 認証状態管理とルート保護の実装
     - _要件: 9.1, 12.1_
 
-- [ ] 3. TypeScript 型定義と API クライアントの実装
+- [x] 3. TypeScript 型定義と API クライアントの実装
   - [x] 3.1 コアデータ型の定義
     - Theme, User, TrendData, DemographicData 等の型定義
     - API レスポンス型とリクエスト型の定義
