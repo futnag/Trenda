@@ -1,69 +1,77 @@
+import Link from 'next/link'
+import Header from '@/components/common/Header'
+
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Theme Discovery Tool
-        </p>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <h1 className="text-4xl font-bold text-center">
-          個人開発者向け
-          <br />
-          テーマ発見ツール
-        </h1>
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <div className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
-          <h2 className="mb-3 text-2xl font-semibold">
-            トレンド分析{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            市場トレンドを分析し、マネタイズ可能性の高いテーマを発見
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      
+      <main className="flex min-h-screen flex-col items-center justify-center p-24">
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-bold text-gray-900 mb-4">
+            個人開発者向け
+            <br />
+            テーマ発見ツール
+          </h1>
+          <p className="text-xl text-gray-600 mb-8 max-w-2xl">
+            マネタイズ可能性の高い開発テーマを効率的に発見し、
+            市場分析から収益予測まで包括的にサポートします。
           </p>
+          
+          <div className="space-x-4">
+            <Link
+              href="/auth/login"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg"
+            >
+              今すぐ始める
+            </Link>
+            <Link
+              href="/pricing"
+              className="bg-white hover:bg-gray-100 text-gray-800 font-bold py-3 px-6 rounded-lg text-lg border border-gray-300"
+            >
+              料金プランを見る
+            </Link>
+          </div>
         </div>
 
-        <div className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
-          <h2 className="mb-3 text-2xl font-semibold">
-            競合分析{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            競合状況を把握し、ブルーオーシャンを特定
-          </p>
-        </div>
+        <div className="grid text-center lg:max-w-5xl lg:w-full lg:grid-cols-4 lg:text-left gap-6">
+          <div className="group rounded-lg border border-gray-200 bg-white px-5 py-4 transition-colors hover:border-blue-300 hover:bg-blue-50">
+            <h2 className="mb-3 text-2xl font-semibold text-gray-900">
+              トレンド分析
+            </h2>
+            <p className="text-sm text-gray-600">
+              市場トレンドを分析し、マネタイズ可能性の高いテーマを発見
+            </p>
+          </div>
 
-        <div className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
-          <h2 className="mb-3 text-2xl font-semibold">
-            収益予測{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            マネタイズスコアと収益予測で投資判断をサポート
-          </p>
-        </div>
+          <div className="group rounded-lg border border-gray-200 bg-white px-5 py-4 transition-colors hover:border-blue-300 hover:bg-blue-50">
+            <h2 className="mb-3 text-2xl font-semibold text-gray-900">
+              競合分析
+            </h2>
+            <p className="text-sm text-gray-600">
+              競合状況を把握し、ブルーオーシャンを特定
+            </p>
+          </div>
 
-        <div className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
-          <h2 className="mb-3 text-2xl font-semibold">
-            技術評価{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            技術的実現可能性と開発期間を評価
-          </p>
+          <div className="group rounded-lg border border-gray-200 bg-white px-5 py-4 transition-colors hover:border-blue-300 hover:bg-blue-50">
+            <h2 className="mb-3 text-2xl font-semibold text-gray-900">
+              収益予測
+            </h2>
+            <p className="text-sm text-gray-600">
+              マネタイズスコアと収益予測で投資判断をサポート
+            </p>
+          </div>
+
+          <div className="group rounded-lg border border-gray-200 bg-white px-5 py-4 transition-colors hover:border-blue-300 hover:bg-blue-50">
+            <h2 className="mb-3 text-2xl font-semibold text-gray-900">
+              技術評価
+            </h2>
+            <p className="text-sm text-gray-600">
+              技術的実現可能性と開発期間を評価
+            </p>
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
   )
 }
