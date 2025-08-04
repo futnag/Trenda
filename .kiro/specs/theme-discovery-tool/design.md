@@ -15,19 +15,19 @@ graph TB
         B[React Components (TypeScript)]
         C[TailwindCSS Styling]
     end
-    
+
     subgraph "Backend Services"
         D[Next.js API Routes]
         E[Supabase Edge Functions]
         F[Data Collection Workers]
     end
-    
+
     subgraph "Database & Auth"
         G[Supabase PostgreSQL]
         H[Supabase Auth]
         I[Supabase Realtime]
     end
-    
+
     subgraph "External APIs"
         J[Google Trends API]
         K[Reddit API]
@@ -35,12 +35,12 @@ graph TB
         M[Product Hunt API]
         N[GitHub API]
     end
-    
+
     subgraph "Third-party Services"
         O[Stripe Payment]
         P[Resend Email]
     end
-    
+
     A --> D
     A --> G
     A --> H
@@ -112,18 +112,21 @@ src/
 ### API エンドポイント設計
 
 #### テーマ関連API
+
 - `GET /api/themes` - テーマ一覧取得（フィルタリング対応）
 - `GET /api/themes/[id]` - 特定テーマの詳細情報
 - `GET /api/themes/trending` - トレンドテーマ取得
 - `POST /api/themes/alerts` - アラート設定
 
 #### ユーザー・課金関連API
+
 - `POST /api/auth/signup` - ユーザー登録
 - `POST /api/payments/create-subscription` - サブスクリプション作成
 - `POST /api/payments/cancel-subscription` - サブスクリプション解約
 - `POST /api/webhooks/stripe` - Stripe Webhook処理
 
 #### データ収集API（Edge Functions）
+
 - `POST /api/collect/trends` - トレンドデータ収集
 - `POST /api/analyze/monetization` - マネタイズスコア算出
 - `POST /api/notify/users` - ユーザー通知送信
@@ -214,33 +217,33 @@ CREATE TABLE subscriptions (
 
 ```typescript
 interface MonetizationFactors {
-    marketSize: number;        // 市場規模 (0-100)
-    paymentWillingness: number; // 支払い意欲 (0-100)
-    competitionLevel: number;   // 競合レベル (0-100, 低いほど良い)
-    revenueModels: number;     // 収益化手法の多様性 (0-100)
-    customerAcquisitionCost: number; // 顧客獲得コスト (0-100, 低いほど良い)
-    customerLifetimeValue: number;   // 顧客生涯価値 (0-100)
+  marketSize: number // 市場規模 (0-100)
+  paymentWillingness: number // 支払い意欲 (0-100)
+  competitionLevel: number // 競合レベル (0-100, 低いほど良い)
+  revenueModels: number // 収益化手法の多様性 (0-100)
+  customerAcquisitionCost: number // 顧客獲得コスト (0-100, 低いほど良い)
+  customerLifetimeValue: number // 顧客生涯価値 (0-100)
 }
 
 function calculateMonetizationScore(factors: MonetizationFactors): number {
-    const weights = {
-        marketSize: 0.25,
-        paymentWillingness: 0.20,
-        competitionLevel: 0.15,
-        revenueModels: 0.15,
-        customerAcquisitionCost: 0.15,
-        customerLifetimeValue: 0.10
-    };
-    
-    const score = 
-        factors.marketSize * weights.marketSize +
-        factors.paymentWillingness * weights.paymentWillingness +
-        (100 - factors.competitionLevel) * weights.competitionLevel +
-        factors.revenueModels * weights.revenueModels +
-        (100 - factors.customerAcquisitionCost) * weights.customerAcquisitionCost +
-        factors.customerLifetimeValue * weights.customerLifetimeValue;
-    
-    return Math.round(score);
+  const weights = {
+    marketSize: 0.25,
+    paymentWillingness: 0.2,
+    competitionLevel: 0.15,
+    revenueModels: 0.15,
+    customerAcquisitionCost: 0.15,
+    customerLifetimeValue: 0.1,
+  }
+
+  const score =
+    factors.marketSize * weights.marketSize +
+    factors.paymentWillingness * weights.paymentWillingness +
+    (100 - factors.competitionLevel) * weights.competitionLevel +
+    factors.revenueModels * weights.revenueModels +
+    (100 - factors.customerAcquisitionCost) * weights.customerAcquisitionCost +
+    factors.customerLifetimeValue * weights.customerLifetimeValue
+
+  return Math.round(score)
 }
 ```
 
@@ -272,12 +275,12 @@ function calculateMonetizationScore(factors: MonetizationFactors): number {
 
 ```typescript
 interface APIError {
-    error: {
-        code: string;
-        message: string;
-        details?: any;
-        timestamp: string;
-    };
+  error: {
+    code: string
+    message: string
+    details?: any
+    timestamp: string
+  }
 }
 ```
 
@@ -416,7 +419,7 @@ jobs:
       - run: npm ci
       - run: npm run test
       - run: npm run test:e2e
-  
+
   deploy:
     needs: test
     runs-on: ubuntu-latest
@@ -431,6 +434,7 @@ jobs:
 ### 技術スタック詳細
 
 #### フロントエンド
+
 - **Next.js 14**: App Router、Server Components、TypeScript完全対応
 - **TypeScript**: 型安全性によるバグ削減、開発効率向上
 - **TailwindCSS**: ユーティリティファーストによる高速スタイリング
@@ -439,11 +443,13 @@ jobs:
 - **React Query**: サーバー状態管理とキャッシング
 
 #### バックエンド
+
 - **Next.js API Routes**: TypeScript による型安全なAPI開発
 - **Supabase Edge Functions**: Deno + TypeScript による高速処理
 - **Zod**: ランタイム型検証とスキーマ定義
 
 #### 開発・ビルドツール
+
 - **TypeScript**: 厳格な型チェック設定
 - **ESLint + Prettier**: コード品質とフォーマット統一
 - **Husky + lint-staged**: コミット前の自動チェック
@@ -451,7 +457,7 @@ jobs:
 
 #### 型定義例
 
-```typescript
+````typescript
 // types/theme.ts
 export interface Theme {
   id: string;
@@ -471,7 +477,7 @@ export interface Theme {
   updatedAt: string;
 }
 
-export type ThemeCategory = 
+export type ThemeCategory =
   | 'productivity'
   | 'entertainment'
   | 'education'
@@ -529,7 +535,7 @@ export interface LocalizedOpportunity {
   culturalFactors: string[];
   regulatoryConsiderations: string[];
 }
-```
+````
 
 ### 人口統計学的フィルタリング
 
@@ -551,37 +557,37 @@ export interface LocalizedOpportunity {
 ```typescript
 // types/monetization.ts
 export interface RevenueProjection {
-  timeframe: 'month' | 'quarter' | 'year';
+  timeframe: 'month' | 'quarter' | 'year'
   scenarios: {
-    conservative: number;
-    realistic: number;
-    optimistic: number;
-  };
-  assumptions: RevenueAssumption[];
+    conservative: number
+    realistic: number
+    optimistic: number
+  }
+  assumptions: RevenueAssumption[]
 }
 
 export interface RevenueAssumption {
-  factor: string;
-  value: number;
-  confidence: number; // 0-100
-  source: string;
+  factor: string
+  value: number
+  confidence: number // 0-100
+  source: string
 }
 
 export interface MonetizationStrategy {
-  primary: RevenueModel;
-  secondary: RevenueModel[];
-  timeline: MonetizationTimeline;
-  riskFactors: RiskFactor[];
+  primary: RevenueModel
+  secondary: RevenueModel[]
+  timeline: MonetizationTimeline
+  riskFactors: RiskFactor[]
 }
 
-export type RevenueModel = 
+export type RevenueModel =
   | 'subscription'
   | 'freemium'
   | 'advertising'
   | 'transaction_fee'
   | 'affiliate'
   | 'premium_features'
-  | 'marketplace';
+  | 'marketplace'
 ```
 
 ### 競合分析の詳細化
@@ -604,27 +610,27 @@ export type RevenueModel =
 ```typescript
 // types/technical.ts
 export interface TechnicalAssessment {
-  difficulty: TechnicalDifficulty;
-  requiredSkills: Skill[];
+  difficulty: TechnicalDifficulty
+  requiredSkills: Skill[]
   estimatedDevelopmentTime: {
-    mvp: number; // weeks
-    fullFeature: number; // weeks
-  };
-  technicalRisks: TechnicalRisk[];
-  recommendedStack: TechStack;
+    mvp: number // weeks
+    fullFeature: number // weeks
+  }
+  technicalRisks: TechnicalRisk[]
+  recommendedStack: TechStack
 }
 
 export interface Skill {
-  name: string;
-  level: 'beginner' | 'intermediate' | 'advanced';
-  importance: 'nice_to_have' | 'important' | 'critical';
+  name: string
+  level: 'beginner' | 'intermediate' | 'advanced'
+  importance: 'nice_to_have' | 'important' | 'critical'
 }
 
 export interface TechnicalRisk {
-  risk: string;
-  probability: number; // 0-100
-  impact: 'low' | 'medium' | 'high';
-  mitigation: string;
+  risk: string
+  probability: number // 0-100
+  impact: 'low' | 'medium' | 'high'
+  mitigation: string
 }
 ```
 
@@ -654,22 +660,25 @@ export interface TechnicalRisk {
 ```typescript
 // lib/api-integrations.ts
 export class TrendDataCollector {
-  async collectGoogleTrends(keywords: string[], region: string): Promise<TrendData[]> {
+  async collectGoogleTrends(
+    keywords: string[],
+    region: string
+  ): Promise<TrendData[]> {
     // Google Trends API integration
   }
-  
+
   async collectRedditData(subreddits: string[]): Promise<RedditTrendData[]> {
     // Reddit API integration
   }
-  
+
   async collectTwitterTrends(hashtags: string[]): Promise<TwitterTrendData[]> {
     // Twitter API integration
   }
-  
+
   async collectProductHuntData(): Promise<ProductHuntTrendData[]> {
     // Product Hunt API integration
   }
-  
+
   async collectGitHubTrends(): Promise<GitHubTrendData[]> {
     // GitHub API integration
   }
