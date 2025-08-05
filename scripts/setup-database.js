@@ -105,10 +105,7 @@ async function main() {
     // Check connection
     console.log('🔌 Testing database connection...')
     const { data, error } = await supabase
-      .from('information_schema.tables')
-      .select('table_name')
-      .eq('table_schema', 'public')
-      .limit(1)
+      .rpc('version')
     
     if (error) {
       console.error('❌ Database connection failed:', error.message)
