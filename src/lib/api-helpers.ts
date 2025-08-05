@@ -191,7 +191,7 @@ export function withRateLimit(
     const {
       maxRequests = 100,
       windowMs = 60 * 1000,
-      keyGenerator = (req) => req.ip || 'anonymous',
+      keyGenerator = (req) => req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'anonymous',
     } = options
 
     const identifier = keyGenerator(request)
@@ -355,7 +355,7 @@ export function logAPIRequest(request: NextRequest, response?: NextResponse) {
   const method = request.method
   const url = request.url
   const userAgent = request.headers.get('user-agent') || 'unknown'
-  const ip = request.ip || 'unknown'
+  const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
   const status = response?.status || 'pending'
 
   console.log(`[${timestamp}] ${method} ${url} - ${status} - ${ip} - ${userAgent}`)

@@ -1,22 +1,36 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 
 interface SignupFormProps {
   onToggleMode?: () => void
   onSuccess?: () => void
+  redirectTo?: string
 }
 
-export function SignupForm({ onToggleMode, onSuccess }: SignupFormProps) {
+export function SignupForm({ onToggleMode, onSuccess, redirectTo }: SignupFormProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
+  const router = useRouter()
 
-  const { signUp, signInWithGoogle, signInWithGitHub } = useAuth()
+  const { signUp, signInWithGoogle, signInWithGitHub, user } = useAuth()
+
+  // Redirect if user is already authenticated
+  useEffect(() => {
+    if (user && !isLoading && !isSuccess) {
+      if (onSuccess) {
+        onSuccess()
+      } else {
+        router.push(redirectTo || '/dashboard')
+      }
+    }
+  }, [user, isLoading, isSuccess, onSuccess, redirectTo, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -50,6 +64,7 @@ export function SignupForm({ onToggleMode, onSuccess }: SignupFormProps) {
 
     try {
       await signInWithGoogle()
+      // OAuth redirects are handled by Supabase
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Googleログインに失敗しました')
     } finally {
@@ -63,6 +78,7 @@ export function SignupForm({ onToggleMode, onSuccess }: SignupFormProps) {
 
     try {
       await signInWithGitHub()
+      // OAuth redirects are handled by Supabase
     } catch (err) {
       setError(err instanceof Error ? err.message : 'GitHubログインに失敗しました')
     } finally {

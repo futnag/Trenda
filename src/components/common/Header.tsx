@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
+import { AuthNavigation } from '@/components/auth/AuthNavigation'
 import Button from './Button'
 
 export default function Header() {
@@ -71,7 +72,7 @@ export default function Header() {
                   type="button"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   className="flex items-center text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md p-1 transition-colors"
-                  aria-expanded={isDropdownOpen}
+                  aria-expanded={isDropdownOpen ? 'true' : 'false'}
                   aria-haspopup="true"
                 >
                   <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
@@ -115,19 +116,7 @@ export default function Header() {
                 )}
               </div>
             ) : (
-              <div className="flex items-center space-x-4">
-                <Link
-                  href="/auth/login"
-                  className="text-gray-500 hover:text-gray-900 transition-colors font-medium"
-                >
-                  ログイン
-                </Link>
-                <Button asChild>
-                  <Link href="/auth/login">
-                    新規登録
-                  </Link>
-                </Button>
-              </div>
+              <AuthNavigation className="flex items-center space-x-4" />
             )}
           </nav>
 
@@ -137,7 +126,7 @@ export default function Header() {
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md p-2"
-              aria-expanded={isMobileMenuOpen}
+              aria-expanded={isMobileMenuOpen ? 'true' : 'false'}
             >
               <span className="sr-only">メニューを開く</span>
               <svg
@@ -208,21 +197,12 @@ export default function Header() {
                   </button>
                 </div>
               ) : (
-                <div className="border-t border-gray-200 pt-2 mt-2 space-y-2">
-                  <Link
-                    href="/auth/login"
-                    className="block px-4 py-2 text-gray-500 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    ログイン
-                  </Link>
-                  <div className="px-4">
-                    <Button fullWidth asChild>
-                      <Link href="/auth/login" onClick={() => setIsMobileMenuOpen(false)}>
-                        新規登録
-                      </Link>
-                    </Button>
-                  </div>
+                <div className="border-t border-gray-200 pt-2 mt-2">
+                  <AuthNavigation 
+                    variant="mobile" 
+                    className="space-y-2"
+                    showLabels={true}
+                  />
                 </div>
               )}
             </div>

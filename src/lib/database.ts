@@ -659,7 +659,7 @@ export const trendDataOperations = {
 
   async createTrendData(trendData: Database['public']['Tables']['trend_data']['Insert']): Promise<APIResponse<TrendData>> {
     try {
-      if (!trendData.theme_id || !trendData.source) {
+      if (!trendData.themeId || !trendData.source) {
         return createErrorResponse('Theme ID and source are required')
       }
 
@@ -793,7 +793,7 @@ export const userAlertOperations = {
 
   async createAlert(alert: Database['public']['Tables']['user_alerts']['Insert']): Promise<APIResponse<UserAlert>> {
     try {
-      if (!alert.user_id || !alert.alert_type) {
+      if (!alert.userId || !alert.alertType) {
         return createErrorResponse('User ID and alert type are required')
       }
 
@@ -982,7 +982,7 @@ export const subscriptionOperations = {
 
   async createSubscription(subscription: Database['public']['Tables']['subscriptions']['Insert']): Promise<APIResponse<Subscription>> {
     try {
-      if (!subscription.user_id || !subscription.plan_name || !subscription.status) {
+      if (!subscription.userId || !subscription.planName || !subscription.status) {
         return createErrorResponse('User ID, plan name, and status are required')
       }
 
@@ -1139,7 +1139,7 @@ export const competitorAnalysisOperations = {
 
   async createCompetitorAnalysis(analysis: Database['public']['Tables']['competitor_analysis']['Insert']): Promise<APIResponse<CompetitorAnalysis>> {
     try {
-      if (!analysis.theme_id || !analysis.competitor_name) {
+      if (!analysis.themeId || !analysis.competitorName) {
         return createErrorResponse('Theme ID and competitor name are required')
       }
 

@@ -89,16 +89,27 @@ export function AuthGuard({
       return (
         <div className="text-center p-8">
           {fallback || (
-            <div>
-              <p className="text-gray-600 mb-4">
-                この機能は{subscriptionTier}プラン以上で利用できます
-              </p>
-              <button 
-                type="button"
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              >
-                プランをアップグレード
-              </button>
+            <div className="max-w-md mx-auto">
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+                <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-yellow-100 rounded-full">
+                  <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m0 0v2m0-2h2m-2 0H10m2-8V7m0 0V5m0 2h2m-2 0H10" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  プレミアム機能
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  この機能は{subscriptionTier === 'basic' ? 'ベーシック' : 'プロ'}プラン以上で利用できます
+                </p>
+                <button 
+                  type="button"
+                  onClick={() => window.location.href = '/pricing'}
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors"
+                >
+                  プランをアップグレード
+                </button>
+              </div>
             </div>
           )}
         </div>

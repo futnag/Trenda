@@ -13,12 +13,35 @@ export function ProfileSettings() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [userProfile, setUserProfile] = useState<any>(null)
 
   useEffect(() => {
     if (user?.email) {
       setEmail(user.email)
+      fetchUserProfile()
     }
   }, [user])
+
+  const fetchUserProfile = async () => {
+    if (!user) return
+    
+    try {
+      const { supabase } = await import('@/lib/supabase')
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single()
+      
+      if (error) {
+        console.error('Error fetching user profile:', error)
+      } else {
+        setUserProfile(data)
+      }
+    } catch (err) {
+      console.error('Error in fetchUserProfile:', err)
+    }
+  }
 
   const handleUpdateEmail = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -120,6 +143,28 @@ export function ProfileSettings() {
               <p className="text-sm text-gray-600 bg-gray-50 p-2 rounded">
                 {user.created_at ? new Date(user.created_at).toLocaleDateString('ja-JP') : '不明'}
               </p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                プラン
+              </label>
+              <div className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                <span className="text-sm text-gray-600">
+                  {userProfile?.subscription_tier === 'free' && '無料プラン'}
+                  {userProfile?.subscription_tier === 'basic' && 'ベーシックプラン'}
+                  {userProfile?.subscription_tier === 'pro' && 'プロプラン'}
+                  {!userProfile?.subscription_tier && '無料プラン'}
+                </span>
+                {userProfile?.subscription_tier === 'free' && (
+                  <button
+                    type="button"
+                    onClick={() => window.location.href = '/pricing'}
+                    className="text-sm text-blue-600 hover:text-blue-500 font-medium"
+                  >
+                    アップグレード
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
