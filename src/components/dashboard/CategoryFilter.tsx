@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import type { ThemeFilterRequest, ThemeCategory, CompetitionLevel, TechnicalDifficulty, AgeGroup } from '@/types'
-import { Card } from '@/components/common/Card'
+import Card from '@/components/common/Card'
 import Button from '@/components/common/Button'
 
 interface CategoryFilterProps {

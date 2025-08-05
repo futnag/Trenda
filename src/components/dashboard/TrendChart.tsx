@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 import type { Theme } from '@/types'
-import { Card } from '@/components/common/Card'
+import Card from '@/components/common/Card'
 
 interface TrendChartProps {
   themes: Theme[]
