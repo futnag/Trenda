@@ -1,35 +1,36 @@
 import { renderHook, act } from '@testing-library/react'
+
+// Mock Supabase with factory function
+jest.mock('@/lib/supabase', () => {
+  const mockChannel = {
+    on: jest.fn().mockReturnThis(),
+    subscribe: jest.fn().mockReturnThis(),
+    unsubscribe: jest.fn(),
+    send: jest.fn()
+  }
+
+  return {
+    supabase: {
+      channel: jest.fn(() => mockChannel),
+      auth: {
+        getUser: jest.fn().mockResolvedValue({
+          data: { user: { id: 'test-user-id' } }
+        })
+      },
+      from: jest.fn(() => ({
+        insert: jest.fn().mockResolvedValue({ error: null }),
+        update: jest.fn().mockResolvedValue({ error: null }),
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        single: jest.fn().mockResolvedValue({ data: null, error: null }),
+        order: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockResolvedValue({ data: [], error: null })
+      }))
+    }
+  }
+})
+
 import { useRealtimeUpdates } from '../useRealtimeUpdates'
-
-// Mock Supabase
-const mockChannel = {
-  on: jest.fn().mockReturnThis(),
-  subscribe: jest.fn().mockReturnThis(),
-  unsubscribe: jest.fn(),
-  send: jest.fn()
-}
-
-const mockSupabase = {
-  channel: jest.fn(() => mockChannel),
-  auth: {
-    getUser: jest.fn().mockResolvedValue({
-      data: { user: { id: 'test-user-id' } }
-    })
-  },
-  from: jest.fn(() => ({
-    insert: jest.fn().mockResolvedValue({ error: null }),
-    update: jest.fn().mockResolvedValue({ error: null }),
-    select: jest.fn().mockReturnThis(),
-    eq: jest.fn().mockReturnThis(),
-    single: jest.fn().mockResolvedValue({ data: null, error: null }),
-    order: jest.fn().mockReturnThis(),
-    limit: jest.fn().mockResolvedValue({ data: [], error: null })
-  }))
-}
-
-jest.mock('@/lib/supabase', () => ({
-  supabase: mockSupabase
-}))
 
 // Mock Notification API
 Object.defineProperty(window, 'Notification', {
@@ -50,9 +51,21 @@ Object.defineProperty(Notification, 'requestPermission', {
   value: jest.fn().mockResolvedValue('granted')
 })
 
+// Get the mocked supabase for test setup
+const { supabase } = require('@/lib/supabase')
+
 describe('useRealtimeUpdates', () => {
+  let mockChannel: any
+
   beforeEach(() => {
     jest.clearAllMocks()
+    mockChannel = {
+      on: jest.fn().mockReturnThis(),
+      subscribe: jest.fn().mockReturnThis(),
+      unsubscribe: jest.fn(),
+      send: jest.fn()
+    }
+    supabase.channel.mockReturnValue(mockChannel)
     mockChannel.subscribe.mockImplementation((callback) => {
       callback('SUBSCRIBED')
       return mockChannel
@@ -73,7 +86,7 @@ describe('useRealtimeUpdates', () => {
   it('should connect to theme updates channel', () => {
     renderHook(() => useRealtimeUpdates({ enableThemeUpdates: true }))
 
-    expect(mockSupabase.channel).toHaveBeenCalledWith('theme-updates')
+    expect(supabase.channel).toHaveBeenCalledWith('theme-updates')
     expect(mockChannel.on).toHaveBeenCalledWith(
       'broadcast',
       { event: 'theme_update' },
@@ -158,7 +171,7 @@ describe('useRealtimeUpdates', () => {
   it('should connect to trend updates channel', () => {
     renderHook(() => useRealtimeUpdates({ enableTrendUpdates: true }))
 
-    expect(mockSupabase.channel).toHaveBeenCalledWith('trend-updates')
+    expect(supabase.channel).toHaveBeenCalledWith('trend-updates')
     expect(mockChannel.on).toHaveBeenCalledWith(
       'broadcast',
       { event: 'trend_data' },
@@ -257,7 +270,7 @@ describe('useRealtimeUpdates', () => {
       await result.current.markNotificationAsRead('notification-1')
     })
 
-    expect(mockSupabase.from).toHaveBeenCalledWith('user_notifications')
+    expect(supabase.from).toHaveBeenCalledWith('user_notifications')
   })
 
   it('should clear all notifications', () => {
@@ -320,7 +333,7 @@ describe('useRealtimeUpdates', () => {
       })
     )
 
-    expect(mockSupabase.channel).not.toHaveBeenCalled()
+    expect(supabase.channel).not.toHaveBeenCalled()
   })
 
   it('should filter unread notifications', () => {
