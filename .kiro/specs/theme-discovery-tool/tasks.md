@@ -73,7 +73,7 @@
     - _要件: 2.3, 8.1, 8.2_
 
 - [ ] 7. 外部 API データ収集システムの実装
-  - [ ] 7.1 データ収集 Edge Functions の作成
+  - [x] 7.1 データ収集 Edge Functions の作成
     - Google Trends, Reddit, Twitter, Product Hunt, GitHub API の統合
     - レート制限管理と自動調整機能
     - エラーハンドリングと再試行ロジック
