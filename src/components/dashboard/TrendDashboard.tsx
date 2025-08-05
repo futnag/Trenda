@@ -1,15 +1,16 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { supabase } from '@/lib/supabase'
 import { themeOperations, subscribeToTable } from '@/lib/database'
 import { getMockThemes } from '@/lib/mock-data'
-import type { Theme, ThemeFilterRequest, PaginatedResponse } from '@/types'
+import type { Theme, ThemeFilterRequest } from '@/types'
 import { LoadingSpinner } from '@/components/common/LoadingSpinner'
-import { Card } from '@/components/common/Card'
+import Card from '@/components/common/Card'
 import { CategoryFilter } from './CategoryFilter'
 import { ThemeCard } from './ThemeCard'
 import { TrendChart } from './TrendChart'
+import { VirtualizedThemeGrid } from './VirtualizedThemeList'
+import { ThemeSortControls, QuickSortButtons } from './ThemeSortControls'
 
 interface TrendDashboardProps {
   className?: string
@@ -23,8 +24,10 @@ export function TrendDashboard({ className = '' }: TrendDashboardProps) {
     sortBy: 'monetizationScore',
     sortOrder: 'desc',
     page: 1,
-    limit: 20,
+    limit: 50, // Increased for virtual scrolling
   })
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [useVirtualScrolling, setUseVirtualScrolling] = useState(true)
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 20,
@@ -50,7 +53,11 @@ export function TrendDashboard({ className = '' }: TrendDashboardProps) {
           max_market_size: filters.maxMarketSize,
           page: filters.page,
           limit: filters.limit,
-          sort_by: filters.sortBy,
+          sort_by: filters.sortBy === 'monetizationScore' ? 'monetization_score' : 
+                   filters.sortBy === 'marketSize' ? 'market_size' :
+                   filters.sortBy === 'createdAt' ? 'created_at' :
+                   filters.sortBy === 'updatedAt' ? 'updated_at' :
+                   filters.sortBy,
           sort_order: filters.sortOrder,
         })
 
@@ -164,24 +171,53 @@ export function TrendDashboard({ className = '' }: TrendDashboardProps) {
           </p>
         </div>
         
-        <div className="mt-4 sm:mt-0 flex items-center space-x-2">
-          <select
-            value={`${filters.sortBy}-${filters.sortOrder}`}
-            onChange={(e) => {
-              const [sortBy, sortOrder] = e.target.value.split('-')
-              handleSortChange(sortBy, sortOrder as 'asc' | 'desc')
-            }}
-            className="rounded-md border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500"
-          >
-            <option value="monetizationScore-desc">マネタイズスコア（高い順）</option>
-            <option value="monetizationScore-asc">マネタイズスコア（低い順）</option>
-            <option value="marketSize-desc">市場規模（大きい順）</option>
-            <option value="marketSize-asc">市場規模（小さい順）</option>
-            <option value="updatedAt-desc">更新日（新しい順）</option>
-            <option value="updatedAt-asc">更新日（古い順）</option>
-            <option value="title-asc">タイトル（A-Z）</option>
-            <option value="title-desc">タイトル（Z-A）</option>
-          </select>
+        <div className="mt-4 sm:mt-0 flex items-center space-x-3">
+          {/* View Mode Toggle */}
+          <div className="flex items-center border border-gray-300 rounded-md">
+            <button
+              type="button"
+              onClick={() => setViewMode('grid')}
+              className={`px-3 py-1.5 text-sm font-medium rounded-l-md ${
+                viewMode === 'grid'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('list')}
+              className={`px-3 py-1.5 text-sm font-medium rounded-r-md ${
+                viewMode === 'list'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Virtual Scrolling Toggle */}
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              checked={useVirtualScrolling}
+              onChange={(e) => setUseVirtualScrolling(e.target.checked)}
+              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <span className="ml-2 text-sm text-gray-700">仮想スクロール</span>
+          </label>
+
+          {/* Sort Controls */}
+          <ThemeSortControls
+            currentSort={`${filters.sortBy}-${filters.sortOrder}`}
+            onSortChange={handleSortChange}
+          />
         </div>
       </div>
 
@@ -190,6 +226,14 @@ export function TrendDashboard({ className = '' }: TrendDashboardProps) {
         filters={filters}
         onFilterChange={handleFilterChange}
       />
+
+      {/* Quick Sort Buttons */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <QuickSortButtons onSortChange={handleSortChange} />
+        <div className="mt-2 sm:mt-0 text-sm text-gray-500">
+          {pagination.total}件のテーマが見つかりました
+        </div>
+      </div>
 
       {/* Trend Chart */}
       <TrendChart themes={themes} />
@@ -224,20 +268,34 @@ export function TrendDashboard({ className = '' }: TrendDashboardProps) {
         </Card>
       )}
 
-      {/* Themes Grid */}
+      {/* Themes Display */}
       {themes.length > 0 ? (
         <div className="space-y-4">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {themes.map((theme) => (
-              <ThemeCard key={theme.id} theme={theme} />
-            ))}
-          </div>
+          {useVirtualScrolling && themes.length > 20 ? (
+            <VirtualizedThemeGrid
+              themes={themes}
+              containerHeight={800}
+              columnsCount={viewMode === 'grid' ? 3 : 1}
+              itemHeight={viewMode === 'grid' ? 280 : 120}
+              onLoadMore={pagination.page < pagination.totalPages ? () => handlePageChange(pagination.page + 1) : undefined}
+              hasMore={pagination.page < pagination.totalPages}
+              loading={loading}
+              className="border border-gray-200 rounded-lg"
+            />
+          ) : (
+            <div className={viewMode === 'grid' ? 'grid gap-6 md:grid-cols-2 lg:grid-cols-3' : 'space-y-4'}>
+              {themes.map((theme) => (
+                <ThemeCard key={theme.id} theme={theme} />
+              ))}
+            </div>
+          )}
 
           {/* Pagination */}
           {pagination.totalPages > 1 && (
             <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
               <div className="flex flex-1 justify-between sm:hidden">
                 <button
+                  type="button"
                   onClick={() => handlePageChange(pagination.page - 1)}
                   disabled={pagination.page <= 1}
                   className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -245,6 +303,7 @@ export function TrendDashboard({ className = '' }: TrendDashboardProps) {
                   前へ
                 </button>
                 <button
+                  type="button"
                   onClick={() => handlePageChange(pagination.page + 1)}
                   disabled={pagination.page >= pagination.totalPages}
                   className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -268,6 +327,7 @@ export function TrendDashboard({ className = '' }: TrendDashboardProps) {
                 <div>
                   <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
                     <button
+                      type="button"
                       onClick={() => handlePageChange(pagination.page - 1)}
                       disabled={pagination.page <= 1}
                       className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -284,6 +344,7 @@ export function TrendDashboard({ className = '' }: TrendDashboardProps) {
                       const isActive = pageNum === pagination.page
                       return (
                         <button
+                          type="button"
                           key={pageNum}
                           onClick={() => handlePageChange(pageNum)}
                           className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
@@ -298,6 +359,7 @@ export function TrendDashboard({ className = '' }: TrendDashboardProps) {
                     })}
                     
                     <button
+                      type="button"
                       onClick={() => handlePageChange(pagination.page + 1)}
                       disabled={pagination.page >= pagination.totalPages}
                       className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"

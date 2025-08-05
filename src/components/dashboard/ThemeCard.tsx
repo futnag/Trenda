@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import type { Theme } from '@/types'
-import { Card } from '@/components/common/Card'
+import Card from '@/components/common/Card'
 
 interface ThemeCardProps {
   theme: Theme
@@ -62,22 +62,31 @@ export function ThemeCard({ theme, className = '' }: ThemeCardProps) {
     return info[difficulty] || { label: difficulty, color: 'text-gray-800', bgColor: 'bg-gray-100' }
   }
 
-  // Get monetization score color
+  // Get monetization score color and background
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-600'
-    if (score >= 60) return 'text-yellow-600'
-    if (score >= 40) return 'text-orange-600'
-    return 'text-red-600'
+    if (score >= 80) return { text: 'text-green-600', bg: 'bg-green-50', border: 'border-green-200' }
+    if (score >= 60) return { text: 'text-yellow-600', bg: 'bg-yellow-50', border: 'border-yellow-200' }
+    if (score >= 40) return { text: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-200' }
+    return { text: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200' }
+  }
+
+  // Get score label
+  const getScoreLabel = (score: number) => {
+    if (score >= 80) return '優秀'
+    if (score >= 60) return '良好'
+    if (score >= 40) return '普通'
+    return '要改善'
   }
 
   const competitionInfo = getCompetitionInfo(theme.competitionLevel)
   const difficultyInfo = getDifficultyInfo(theme.technicalDifficulty)
+  const scoreInfo = getScoreColor(theme.monetizationScore)
 
   return (
-    <Card className={`hover:shadow-lg transition-shadow duration-200 ${className}`}>
+    <Card className={`hover:shadow-lg transition-all duration-200 hover:scale-[1.02] ${className}`}>
       <Link href={`/themes/${theme.id}`} className="block p-6">
         {/* Header */}
-        <div className="flex items-start justify-between mb-3">
+        <div className="flex items-start justify-between mb-4">
           <div className="flex-1 min-w-0">
             <h3 className="text-lg font-semibold text-gray-900 truncate">
               {theme.title}
@@ -87,10 +96,17 @@ export function ThemeCard({ theme, className = '' }: ThemeCardProps) {
             </p>
           </div>
           <div className="ml-4 flex-shrink-0">
-            <div className={`text-2xl font-bold ${getScoreColor(theme.monetizationScore)}`}>
-              {theme.monetizationScore}
+            <div className={`
+              px-3 py-2 rounded-lg border text-center min-w-[80px]
+              ${scoreInfo.bg} ${scoreInfo.border}
+            `}>
+              <div className={`text-2xl font-bold ${scoreInfo.text}`}>
+                {theme.monetizationScore}
+              </div>
+              <div className={`text-xs font-medium ${scoreInfo.text}`}>
+                {getScoreLabel(theme.monetizationScore)}
+              </div>
             </div>
-            <div className="text-xs text-gray-500 text-center">スコア</div>
           </div>
         </div>
 
@@ -109,16 +125,23 @@ export function ThemeCard({ theme, className = '' }: ThemeCardProps) {
 
         {/* Metrics */}
         <div className="grid grid-cols-2 gap-4 mb-4">
-          <div>
-            <div className="text-sm text-gray-500">市場規模</div>
+          <div className="bg-gray-50 rounded-lg p-3">
+            <div className="text-sm text-gray-500 mb-1">市場規模</div>
             <div className="text-lg font-semibold text-gray-900">
               {formatNumber(theme.marketSize)}
             </div>
+            <div className="text-xs text-gray-500">
+              {theme.marketSize >= 1000000 ? '大規模市場' : 
+               theme.marketSize >= 500000 ? '中規模市場' : '小規模市場'}
+            </div>
           </div>
-          <div>
-            <div className="text-sm text-gray-500">推定収益</div>
-            <div className="text-lg font-semibold text-gray-900">
-              {formatCurrency(theme.estimatedRevenue.min)} - {formatCurrency(theme.estimatedRevenue.max)}
+          <div className="bg-gray-50 rounded-lg p-3">
+            <div className="text-sm text-gray-500 mb-1">推定月収</div>
+            <div className="text-sm font-semibold text-gray-900">
+              {formatCurrency(theme.estimatedRevenue.min)}
+            </div>
+            <div className="text-xs text-gray-500">
+              〜 {formatCurrency(theme.estimatedRevenue.max)}
             </div>
           </div>
         </div>
