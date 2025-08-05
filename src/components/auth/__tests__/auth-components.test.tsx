@@ -54,7 +54,7 @@ describe('Authentication Components', () => {
     it('renders login form correctly', () => {
       render(<LoginForm />)
       
-      expect(screen.getByText('ログイン')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'ログイン' })).toBeInTheDocument()
       expect(screen.getByLabelText('メールアドレス')).toBeInTheDocument()
       expect(screen.getByLabelText('パスワード')).toBeInTheDocument()
       expect(screen.getByText('Googleでログイン')).toBeInTheDocument()
@@ -100,7 +100,7 @@ describe('Authentication Components', () => {
     it('renders signup form correctly', () => {
       render(<SignupForm />)
       
-      expect(screen.getByText('新規登録')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: '新規登録' })).toBeInTheDocument()
       expect(screen.getByLabelText('メールアドレス')).toBeInTheDocument()
       expect(screen.getByLabelText('パスワード')).toBeInTheDocument()
       expect(screen.getByLabelText('パスワード確認')).toBeInTheDocument()
