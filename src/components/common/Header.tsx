@@ -3,8 +3,10 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
+import { useSubscription } from '@/hooks/useSubscription'
 import { AuthNavigation } from '@/components/auth/AuthNavigation'
 import Button from './Button'
+import UsageTracker from '@/components/subscription/UsageTracker'
 
 export default function Header() {
   const { user, signOut } = useAuth()
@@ -94,16 +96,33 @@ export default function Header() {
                 </button>
 
                 {isDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                  <div className="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
                     <div className="px-4 py-2 text-sm text-gray-700 border-b border-gray-100">
                       {user.email}
                     </div>
+                    
+                    {/* Usage Tracking */}
+                    <div className="px-4 py-3 border-b border-gray-100">
+                      <UsageTracker 
+                        features={['detailedAnalysisPerMonth']}
+                        compact={true}
+                        showUpgradePrompt={true}
+                      />
+                    </div>
+                    
                     <Link
                       href="/profile"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                       onClick={() => setIsDropdownOpen(false)}
                     >
                       プロフィール設定
+                    </Link>
+                    <Link
+                      href="/pricing"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      料金プラン
                     </Link>
                     <button
                       type="button"

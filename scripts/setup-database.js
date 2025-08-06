@@ -105,9 +105,10 @@ async function main() {
     // Check connection
     console.log('🔌 Testing database connection...')
     const { data, error } = await supabase
-      .rpc('version')
+      .from('users')
+      .select('count', { count: 'exact', head: true })
     
-    if (error) {
+    if (error && !error.message.includes('row-level security')) {
       console.error('❌ Database connection failed:', error.message)
       process.exit(1)
     }
